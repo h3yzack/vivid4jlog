@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE_BASE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_BASE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    
+    <!-- Console with emojis and colors -->
+    <appender name="VIVID4JLOG_CONSOLE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
+        <theme>CLASSIC</theme>
+        <colorEnabled>true</colorEnabled>
+        <appender-ref ref="CONSOLE_BASE"/>
+    </appender>
+
+    <appender name="VIVID4JLOG_FILE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
+        <theme>CLASSIC</theme>
+        <colorEnabled>false</colorEnabled> <!-- No colors in files -->
+        <appender-ref ref="FILE_BASE"/>
+    </appender>
+    
+    <!-- Root logger configuration -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE_BASE"/>
+        <appender-ref ref="FILE_BASE"/>
+    </root>
+
+    <logger name="io.github.h3yzack.vivid4jlog" level="DEBUG" additivity="false">
+        <appender-ref ref="VIVID4JLOG_CONSOLE"/>
+        <appender-ref ref="VIVID4JLOG_FILE"/>
+    </logger>
+    
+</configuration>
