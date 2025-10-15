@@ -1,7 +1,10 @@
 package io.github.h3yzack.vivid4jlog.theme;
 
 /**
- * ANSI color codes for console output formatting.
+ * ANSI color codes and utility methods for console output formatting.
+ * Provides constants for colors, styles, and helper methods for colorizing text.
+ * 
+ * @author Zuhaimi A.
  */
 public class AnsiColors {
     public static final String RESET = "\u001B[0m";
@@ -44,7 +47,10 @@ public class AnsiColors {
     public static final String STRIKETHROUGH = "\u001B[9m";
     
     /**
-     * Get color for log level
+     * Gets the appropriate ANSI color code for a given log level.
+     * 
+     * @param level the log level
+     * @return the ANSI color code
      */
     public static String getColorForLevel(String level) {
         return switch (level) {
@@ -60,7 +66,11 @@ public class AnsiColors {
     }
     
     /**
-     * Wrap text with color
+     * Wraps text with the specified ANSI color code and resets at the end.
+     * 
+     * @param text the text to colorize
+     * @param color the ANSI color code
+     * @return the colorized text
      */
     public static String colorize(String text, String color) {
         return color + text + RESET;

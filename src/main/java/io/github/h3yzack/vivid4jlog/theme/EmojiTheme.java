@@ -3,8 +3,10 @@ package io.github.h3yzack.vivid4jlog.theme;
 import java.util.Map;
 
 /**
- * Enum representing different emoji themes for logging.
- * Each theme provides a distinct set of emojis for different log levels.
+ * Defines different emoji themes for log messages.
+ * Each theme provides a unique set of emojis for various log levels.
+ * 
+ * @author Zuhaimi A.
  */
 public enum EmojiTheme {
     CLASSIC("classic"),
@@ -20,12 +22,19 @@ public enum EmojiTheme {
         this.name = name;
     }
     
+    /**
+     * Gets the name of this theme.
+     * 
+     * @return the theme name
+     */
     public String getName() {
         return name;
     }
     
     /**
-     * Get emoji mappings for this theme
+     * Returns a map of log levels to their corresponding emoji symbols.
+     * 
+     * @return the emoji mappings for this theme
      */
     public Map<String, String> getEmojiMap() {
         return switch (this) {
@@ -86,6 +95,12 @@ public enum EmojiTheme {
         };
     }
     
+    /**
+     * Converts a string to the corresponding EmojiTheme.
+     * 
+     * @param name the theme name
+     * @return the matching EmojiTheme, or CLASSIC if no match is found
+     */
     public static EmojiTheme fromString(String name) {
         for (EmojiTheme theme : values()) {
             if (theme.name.equalsIgnoreCase(name)) {

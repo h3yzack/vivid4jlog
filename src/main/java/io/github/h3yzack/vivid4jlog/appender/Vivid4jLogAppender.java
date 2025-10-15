@@ -9,6 +9,12 @@ import ch.qos.logback.core.spi.AppenderAttachable;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.github.h3yzack.vivid4jlog.theme.EmojiTheme;
 
+/**
+ * Custom Logback appender that wraps logging events with emoji and color formatting.
+ * This appender can be configured in logback.xml to apply theme-based formatting.
+ * 
+ * @author Zuhaimi A.
+ */
 public class Vivid4jLogAppender extends AppenderBase<ILoggingEvent>
         implements AppenderAttachable<ILoggingEvent> {
 
@@ -16,10 +22,20 @@ public class Vivid4jLogAppender extends AppenderBase<ILoggingEvent>
     private EmojiTheme theme = EmojiTheme.CLASSIC;
     private boolean colorEnabled = true;
 
-    // setters used from logback-spring.xml
+    /**
+     * Sets the emoji theme for this appender.
+     * 
+     * @param themeName the name of the theme
+     */
     public void setTheme(String themeName) {
         this.theme = EmojiTheme.fromString(themeName);
     }
+    
+    /**
+     * Enables or disables color output.
+     * 
+     * @param colorEnabled true to enable colors, false to disable
+     */
     public void setColorEnabled(boolean colorEnabled) {
         this.colorEnabled = colorEnabled;
     }

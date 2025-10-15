@@ -13,18 +13,31 @@ import org.slf4j.Marker;
 import java.util.Map;
 
 /**
- * Wrapper for ILoggingEvent that applies emoji formatting to the message
+ * Wrapper for ILoggingEvent that applies emoji and color formatting to log messages.
+ * This class delegates most methods to the original event while providing a formatted message.
+ * 
+ * @author Zuhaimi A.
  */
 public class Vivid4jLoggingEvent implements ILoggingEvent {
     
     private final ILoggingEvent originalEvent;
     private final String formattedMessage;
     
+    /**
+     * Creates a formatted logging event wrapper.
+     * 
+     * @param originalEvent the original logging event
+     * @param theme the emoji theme to apply
+     * @param applyColors whether to apply ANSI colors
+     */
     public Vivid4jLoggingEvent(ILoggingEvent originalEvent, EmojiTheme theme, boolean applyColors) {
         this.originalEvent = originalEvent;
         this.formattedMessage = formatMessage(originalEvent, theme, applyColors);
     }
     
+    /**
+     * Formats the log message with emoji and optional colors.
+     */
     private String formatMessage(ILoggingEvent event, EmojiTheme theme, boolean applyColors) {
         String level = event.getLevel().toString();
         String originalMessage = event.getFormattedMessage();

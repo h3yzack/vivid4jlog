@@ -1,123 +1,170 @@
 # Vivid4jLog
 
-A flexible emoji and color logging library for Java, supporting both direct logger usage and Logback appender integration.
+A lightweight Java logging library that adds emoji themes and optional ANSI colors to log messages. Use directly in code or integrate via a Logback appender.
 
 ## Features
-- Emoji themes for log levels (INFO, WARN, ERROR, etc.)
-- ANSI color support for console output
-- Easy integration with Logback via custom appender
-- Simple static logger usage for direct control
+
+- Multiple emoji themes for common log levels
+- Optional ANSI color output for consoles
+- Works with or without Logback
 - Per-logger and global configuration
+- Extra markers: SUCCESS and COMPLETED
 
+## Installation
 
+Add the dependency to your build.
 
-## Usage Options
-
-Vivid4jLog supports three main usage patterns:
-
-### 1. Logback Appender Integration
-
-Integrate Vivid4jLog with Logback for enterprise or config-driven setups. This allows you to apply emoji themes and color formatting to specific packages or appenders via XML configuration.
+Maven:
 
 ```xml
-<configuration>
-    <!-- Base appenders -->
-    <appender name="CONSOLE_BASE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="FILE_BASE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/app.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>300MB</totalSizeCap>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <!-- Vivid4jLog themed appenders -->
-    <appender name="THEMED_CONSOLE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
-        <theme>TECH</theme>
-        <colorEnabled>true</colorEnabled>
-        <appender-ref ref="CONSOLE_BASE"/>
-    </appender>
-
-    <appender name="THEMED_FILE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
-        <theme>CLASSIC</theme>
-        <colorEnabled>false</colorEnabled>
-        <appender-ref ref="FILE_BASE"/>
-    </appender>
-
-    <!-- Package-specific logger -->
-    <logger name="my.custom.package" level="DEBUG" additivity="false">
-        <appender-ref ref="THEMED_CONSOLE"/>
-        <appender-ref ref="THEMED_FILE"/>
-    </logger>
-
-    <!-- Root logger (plain) -->
-    <root level="INFO">
-        <appender-ref ref="CONSOLE_BASE"/>
-        <appender-ref ref="FILE_BASE"/>
-    </root>
-</configuration>
+<dependency>
+	<groupId>io.github.h3yzack</groupId>
+	<artifactId>vivid4jlog</artifactId>
+	<version>${latest.version}</version>
+</dependency>
 ```
 
-- **Customize theme and color per appender** using `<theme>` and `<colorEnabled>`.
-- **Apply emojis/colors only to selected packages** by configuring the logger section.
-- **No color in files** (set `<colorEnabled>false</colorEnabled>` for file appenders).
+Gradle:
 
-### 2. Global Defaults via vivid4jlog.properties
-
-Set global emoji theme and color settings using a properties file. This is useful for simple projects or when you want to control defaults without modifying code or XML config.
-
-Create a file named `vivid4jlog.properties` in your classpath:
-
-```properties
-vivid4jlog.theme=TECH
-vivid4jlog.color.enabled=false
-vivid4jlog.custom.prefix=[APP]
-vivid4jlog.custom.suffix=| MyService
+```gradle
+implementation 'io.github.h3yzack:vivid4jlog:${latest.version}'
 ```
 
-These settings will be picked up automatically by Vivid4jLog and applied globally.
+## Quick start
 
-### 3. Static Logger Usage
+```java
+import io.github.h3yzack.vivid4jlog.Vivid4jLogger;
 
-Directly use the logger in your Java code for per-class or per-logger customization. This approach is recommended when you want explicit control in code.
+public class MyApp {
+		private static final Vivid4jLogger log = Vivid4jLogger.create(MyApp.class);
+
+		public static void main(String[] args) {
+				log.info("Starting up");
+				log.success("Connected");
+				log.warn("Low disk space");
+				log.error("Failed to write file");
+		}
+}
+```
+
+## Configuration
+
+Choose one or mix as needed.
+
+### 1) Programmatic
 
 ```java
 import io.github.h3yzack.vivid4jlog.Vivid4jLogger;
 import io.github.h3yzack.vivid4jlog.theme.EmojiTheme;
 
-public class MyService {
-    private static final Vivid4jLogger log = Vivid4jLogger.create(EmojiTheme.TECH);
-    // or: Vivid4jLogger.create(); for default theme
-
-    public void doSomething() {
-        log.info("Service started"); // 💡 Service started
-        log.success("Operation completed"); // 🚀 Operation completed
-        log.warn("Potential issue detected"); // ⚡ Potential issue detected
-        log.error("Error occurred"); // 🔥 Error occurred
-    }
-}
+Vivid4jLogger log = Vivid4jLogger.create(MyService.class, EmojiTheme.TECH);
+log.getConfig().setColorEnabled(true);     // enable colors for this logger
+log.setTheme(EmojiTheme.GAMING);           // switch theme at runtime
 ```
 
-- **Choose theme per logger**: `Vivid4jLogger.create(EmojiTheme.GAMING)`
-- **Enable/disable colors globally**: `Vivid4jLogConfig.getInstance().setColorEnabled(true/false)`
+### 2) Properties file (global defaults)
 
-## Emoji Themes
-- CLASSIC
-- NATURE
-- TECH
-- GAMING
-- MINIMAL
-- COLORFUL
+Create `vivid4jlog.properties` on the classpath:
+
+```properties
+vivid4jlog.theme=TECH
+vivid4jlog.color.enabled=true
+vivid4jlog.custom.prefix=[APP]
+vivid4jlog.custom.suffix=
+```
+
+### 3) Logback integration
+
+Wrap your base appenders with the Vivid4jLog appender.
+
+```xml
+<configuration>
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/app.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<maxFileSize>10MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>300MB</totalSizeCap>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<!-- Themed wrappers -->
+	<appender name="THEMED_CONSOLE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
+		<theme>TECH</theme>
+		<colorEnabled>true</colorEnabled>
+		<appender-ref ref="CONSOLE"/>
+	</appender>
+
+	<appender name="THEMED_FILE" class="io.github.h3yzack.vivid4jlog.appender.Vivid4jLogAppender">
+		<theme>CLASSIC</theme>
+		<colorEnabled>false</colorEnabled>
+		<appender-ref ref="FILE"/>
+	</appender>
+
+	<!-- Apply to selected packages -->
+	<logger name="com.myapp" level="DEBUG" additivity="false">
+		<appender-ref ref="THEMED_CONSOLE"/>
+		<appender-ref ref="THEMED_FILE"/>
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE"/>
+	</root>
+</configuration>
+```
+
+## Themes
+
+Built-in themes and their emojis per level:
+
+| Theme      | TRACE | DEBUG | INFO | WARN | ERROR | SUCCESS | COMPLETED |
+|------------|:-----:|:-----:|:----:|:----:|:-----:|:-------:|:---------:|
+| CLASSIC    | 🔍    | 🐛    | ✅   | ⚠️   | ❌    | 🎉      | ✨        |
+| TECH       | 🔬    | ⚙️    | 💡   | ⚡   | 🔥    | 🚀      | ⭐        |
+| GAMING     | 🎯    | 🎮    | 🏆   | ⚔️   | 💀    | 🎊      | 👑        |
+| NATURE     | 🌱    | 🍃    | 🌸   | 🌰   | 🌋    | 🌺      | 🌈        |
+| MINIMAL    | ·     | -     | ✓    | !    | ✗     | ✓       | ✓         |
+| COLORFUL   | 🔮    | 🎨    | 💙   | 💛   | 💥    | 💚      | 💜        |
 
 
+## Color mapping
+
+When colors are enabled:
+
+- TRACE: bright black
+- DEBUG: cyan
+- INFO: blue
+- WARN: yellow
+- ERROR: red
+- SUCCESS: green
+- COMPLETED: purple
+
+## Requirements
+
+- Java 17+
+- SLF4J 2.0+
+- Logback 1.4+ (only for appender integration)
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+## Author
+
+@h3yzack
+
+## Contributing
+
+Small, focused improvements are welcome. Please open a PR.
 
