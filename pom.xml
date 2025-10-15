@@ -32,7 +32,7 @@
     <scm>
         <url>https://github.com/h3yzack/vivid4jlog</url>
         <connection>scm:git:git://github.com/h3yzack/vivid4jlog.git</connection>
-        <developerConnection>scm:git:ssh://github.com/h3yzack/vivid4jlog.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/h3yzack/vivid4jlog.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
@@ -144,6 +144,12 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>3.2.8</version>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
