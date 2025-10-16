@@ -82,6 +82,7 @@ Wrap your base appenders with the Vivid4jLog appender.
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
 			<pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
 
@@ -95,6 +96,7 @@ Wrap your base appenders with the Vivid4jLog appender.
 		</rollingPolicy>
 		<encoder>
 			<pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+			<charset>UTF-8</charset>
 		</encoder>
 	</appender>
 
